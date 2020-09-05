@@ -1,4 +1,5 @@
 import React from "react";
+import Calculator from "./components/Calculator";
 //import "./App.css";
 
 function App() {
@@ -9,6 +10,9 @@ function App() {
         <p className="lead">
           Created to qualify for "Entry" position at 23People
         </p>
+      </>
+      <>
+        <Calculator />
       </>
     </div>
   );
