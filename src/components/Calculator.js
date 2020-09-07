@@ -5,7 +5,8 @@ import NumericKeys from "./NumericKeys";
 import "./Calculator.css";
 
 function Calculator() {
-  const [panel, setPanel] = useState([]);
+  const [panel, setPanel] = useState("");
+  // const [subPanel, setSubPanel] = useState("");
 
   const numericButtons = () => {
     const numbers = [];
@@ -25,16 +26,27 @@ function Calculator() {
     }
     return numbers;
   };
+  const arithmeticCheck = (e) => {
+    //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
+    //regex taken from this site
+    let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    format.test(panel[panel.length - 1])
+      ? setPanel(panel.slice(0, -1) + e)
+      : setPanel(panel + e);
+  };
 
   return (
     <div className="container center-text">
-      <div className="displa-panel my-2">
+      {/* <div className="display-panel my-2"> {subPanel}</div> */}
+      <div className="display-panel my-2">
         <DisplayPanel Panel={panel} />
       </div>
       <div className="operations my-2">
         <button
           className="btn btn-danger"
-          onClick={(e) => setPanel(e.target.value)}
+          onClick={(e) => {
+            setPanel(e.target.value);
+          }}
           value={""}
           key={0}
         >
@@ -42,51 +54,40 @@ function Calculator() {
         </button>
         <button
           className="btn btn-primary"
-          onClick={(e) => {
-            //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
-            //regex taken from this site
-            let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-            format.test(panel[panel.length - 1])
-              ? setPanel(panel.slice(0, -1) + e.target.value)
-              : setPanel(panel + e.target.value);
-          }}
           value="+"
+          onClick={(e) => {
+            arithmeticCheck(e.target.value);
+          }}
         >
           +
         </button>
         <button
           className="btn btn-primary"
-          onClick={(e) => {
-            let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-            format.test(panel[panel.length - 1])
-              ? setPanel(panel.slice(0, -1) + e.target.value)
-              : setPanel(panel + e.target.value);
-          }}
           value="-"
+          key="-"
+          onClick={(e) => {
+            arithmeticCheck(e.target.value);
+          }}
         >
           -
         </button>
         <button
           className="btn btn-primary"
-          onClick={(e) => {
-            let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-            format.test(panel[panel.length - 1])
-              ? setPanel(panel.slice(0, -1) + e.target.value)
-              : setPanel(panel + e.target.value);
-          }}
           value="*"
+          key="*"
+          onClick={(e) => {
+            arithmeticCheck(e.target.value);
+          }}
         >
           *
         </button>
         <button
           className="btn btn-primary"
-          onClick={(e) => {
-            let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-            format.test(panel[panel.length - 1])
-              ? setPanel(panel.slice(0, -1) + e.target.value)
-              : setPanel(panel + e.target.value);
-          }}
           value="/"
+          key="/"
+          onClick={(e) => {
+            arithmeticCheck(e.target.value);
+          }}
         >
           /
         </button>
