@@ -4,9 +4,8 @@ import DisplayPanel from "./DisplayPanel";
 import NumericKeys from "./NumericKeys";
 import "./Calculator.css";
 
-function Calculator() {
-  const [panel, setPanel] = useState("");
-  // const [subPanel, setSubPanel] = useState("");
+function Calculator({ initialValue }) {
+  const [panel, setPanel] = useState(initialValue);
 
   const numericButtons = () => {
     const numbers = [];
@@ -14,9 +13,11 @@ function Calculator() {
       numbers.push(
         <button
           className="btn btn-outline-dark mx-2"
-          onClick={(e) => {
-            setPanel(panel + e.target.value);
-          }}
+          onClick={(e) =>
+            panel === initialValue
+              ? setPanel(e.target.value)
+              : setPanel(panel + e.target.value)
+          }
           value={i}
           key={i}
         >
@@ -26,6 +27,7 @@ function Calculator() {
     }
     return numbers;
   };
+
   const arithmeticCheck = (e) => {
     //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
     //regex taken from this site
@@ -37,7 +39,6 @@ function Calculator() {
 
   return (
     <div className="container center-text">
-      {/* <div className="display-panel my-2"> {subPanel}</div> */}
       <div className="display-panel my-2">
         <DisplayPanel Panel={panel} />
       </div>
@@ -47,10 +48,18 @@ function Calculator() {
           onClick={(e) => {
             setPanel(e.target.value);
           }}
-          value={""}
-          key={0}
+          value={"0"}
         >
           AC
+        </button>
+        <button
+          className="btn btn-warning"
+          onClick={(e) => {
+            panel.length > 1 ? setPanel(panel.slice(0, -1)) : setPanel("0");
+          }}
+          value={""}
+        >
+          &#60;
         </button>
         <button
           className="btn btn-primary"
@@ -96,7 +105,12 @@ function Calculator() {
         <NumericKeys className="numbers" Buttons={numericButtons()} />
         <button
           className="btn btn-outline-dark mx-2"
-          onClick={(e) => setPanel(panel + e.target.value)}
+          onClick={(e) =>
+            // setPanel(panel + e.target.value)
+            panel === initialValue
+              ? setPanel(e.target.value)
+              : setPanel(panel + e.target.value)
+          }
           value="."
           key="."
         >
@@ -106,16 +120,16 @@ function Calculator() {
       <div className="result">
         <button
           className="btn btn-success"
+          //https://stackoverflow.com/questions/6479236/calculate-string-value-in-javascript-not-using-eval
           onClick={(e) => {
             try {
               setPanel(
-                String(eval(panel)).lenght > 3 &&
-                  String(eval(panel)).includes(".")
+                eval(panel).length > 3 && eval(panel).includes(".")
                   ? String(eval(panel))
                   : String(eval(panel))
               );
             } catch (err) {
-              setPanel("error presione AC");
+              setPanel("Error, please press AC");
             }
           }}
           value="="
