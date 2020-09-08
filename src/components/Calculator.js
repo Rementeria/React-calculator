@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import DisplayPanel from "./DisplayPanel";
 import NumericKeys from "./NumericKeys";
+import * as math from "mathjs";
 import "./Calculator.css";
 
 function Calculator({ initialValue }) {
@@ -126,15 +127,16 @@ function Calculator({ initialValue }) {
           className="btn btn-success"
           //https://stackoverflow.com/questions/6479236/calculate-string-value-in-javascript-not-using-eval
           onClick={(e) => {
-            try {
-              setPanel(
-                eval(panel).length > 3 && eval(panel).includes(".")
-                  ? String(eval(panel))
-                  : String(eval(panel))
-              );
-            } catch (err) {
-              setPanel("Error, please press AC");
-            }
+            // try {
+            //   setPanel(
+            //     eval(panel).length > 3 && eval(panel).includes(".")
+            //       ? String(eval(panel))
+            //       : String(eval(panel))
+            //   );
+            // } catch (err) {
+            //   setPanel("Error, please press AC");
+            // }
+            setPanel(math.evaluate(panel));
           }}
           value="="
         >

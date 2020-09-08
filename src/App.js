@@ -12,7 +12,7 @@ function App() {
         </p>
       </>
       <>
-        <Calculator initialValue={"0"} />
+        <Calculator initialValue={""} />
       </>
     </div>
   );
