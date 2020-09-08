@@ -7,6 +7,12 @@ import "./Calculator.css";
 
 function Calculator({ initialValue }) {
   const [panel, setPanel] = useState(initialValue);
+  const [subPanel, setSubPanel] = useState("0");
+  //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
+  //regex taken from this site
+  let format = /[*+-/()]+/;
+  let format2 = /[()]+/;
+
   useEffect(() => {
     if (initialValue === "") {
       setPanel("0");
@@ -34,37 +40,77 @@ function Calculator({ initialValue }) {
   };
 
   const arithmeticCheck = (e) => {
-    //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
-    //regex taken from this site
-    let format = /[*+-/]+/;
     format.test(panel[panel.length - 1])
       ? setPanel(panel.slice(0, -1) + e)
       : setPanel(panel + e);
+    if (format2.test(panel[panel.length - 1])) {
+      setPanel(panel + e);
+    }
+  };
+  const parenthesis = (e) => {
+    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
   };
 
   return (
     <div className="container center-text">
+      <div>{subPanel}</div>
       <div className="display-panel my-2">
         <DisplayPanel Panel={panel} />
       </div>
       <div className="operations my-2">
         <button
           className="btn btn-danger"
+          value={initialValue}
           onClick={(e) => {
-            setPanel(e.target.value);
+            initialValue === "0" || initialValue === ""
+              ? setPanel("0")
+              : setPanel(e.target.value);
+            setSubPanel("0");
           }}
-          value={"0"}
         >
           AC
         </button>
         <button
           className="btn btn-warning"
-          onClick={(e) => {
-            panel.length > 1 ? setPanel(panel.slice(0, -1)) : setPanel("0");
+          onClick={() => {
+            if (panel.length > 1) {
+              setPanel(panel.slice(0, -1));
+            } else if (panel.length <= 1 && initialValue === "") {
+              setPanel("0");
+            } else if (panel.length <= 1 && initialValue !== "") {
+              setPanel(initialValue);
+            }
           }}
-          value={""}
         >
           &#60;
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => {
+            subPanel === "0"
+              ? setPanel(panel)
+              : setPanel(subPanel.slice(0, -2));
+          }}
+        >
+          Prev
+        </button>
+        <button
+          className="btn btn-secondary"
+          value="("
+          onClick={(e) => {
+            parenthesis(e.target.value);
+          }}
+        >
+          (
+        </button>
+        <button
+          className="btn btn-secondary"
+          value=")"
+          onClick={(e) => {
+            parenthesis(e.target.value);
+          }}
+        >
+          )
         </button>
         <button
           className="btn btn-primary"
@@ -111,7 +157,6 @@ function Calculator({ initialValue }) {
         <button
           className="btn btn-outline-dark mx-2"
           onClick={(e) =>
-            // setPanel(panel + e.target.value)
             panel === initialValue
               ? setPanel(e.target.value)
               : setPanel(panel + e.target.value)
@@ -125,18 +170,13 @@ function Calculator({ initialValue }) {
       <div className="result">
         <button
           className="btn btn-success"
-          //https://stackoverflow.com/questions/6479236/calculate-string-value-in-javascript-not-using-eval
-          onClick={(e) => {
-            // try {
-            //   setPanel(
-            //     eval(panel).length > 3 && eval(panel).includes(".")
-            //       ? String(eval(panel))
-            //       : String(eval(panel))
-            //   );
-            // } catch (err) {
-            //   setPanel("Error, please press AC");
-            // }
-            setPanel(math.evaluate(panel));
+          onClick={() => {
+            try {
+              setSubPanel(panel + " =");
+              setPanel(math.evaluate(panel));
+            } catch (err) {
+              setPanel("Error, please press AC");
+            }
           }}
           value="="
         >
