@@ -1,12 +1,16 @@
 //This is the base of everything
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DisplayPanel from "./DisplayPanel";
 import NumericKeys from "./NumericKeys";
 import "./Calculator.css";
 
 function Calculator({ initialValue }) {
   const [panel, setPanel] = useState(initialValue);
-
+  useEffect(() => {
+    if (initialValue === "") {
+      setPanel("0");
+    }
+  }, [initialValue]);
   const numericButtons = () => {
     const numbers = [];
     for (let i = 9; i >= 0; i--) {
@@ -14,7 +18,7 @@ function Calculator({ initialValue }) {
         <button
           className="btn btn-outline-dark mx-2"
           onClick={(e) =>
-            panel === initialValue
+            panel === "" || panel === "0"
               ? setPanel(e.target.value)
               : setPanel(panel + e.target.value)
           }
@@ -31,7 +35,7 @@ function Calculator({ initialValue }) {
   const arithmeticCheck = (e) => {
     //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
     //regex taken from this site
-    let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    let format = /[*+-/]+/;
     format.test(panel[panel.length - 1])
       ? setPanel(panel.slice(0, -1) + e)
       : setPanel(panel + e);
