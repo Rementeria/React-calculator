@@ -21,9 +21,9 @@
   text-overflow: ellipsis;
 }
 .panel {
-  font-size: 40px;
+  font-size: 20px;
   white-space: nowrap;
 }
 .sub-panel {
-  white-space: nowrap;
+  word-break: break-all;
 }
