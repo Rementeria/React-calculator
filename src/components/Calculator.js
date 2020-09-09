@@ -82,7 +82,9 @@ function Calculator({ initialValue }) {
     <div className="calculator-size">
       <div className="nes-container">
         <div className="nes-input is-dark display">
-          <div className="mb-2 d-flex flex-row-reverse mr-3">{subPanel}</div>
+          <div className="mb-2 d-flex flex-row-reverse mr-3 sub-panel">
+            {subPanel}
+          </div>
           <div className="d-flex flex-row-reverse mr-3 panel">{panel}</div>
         </div>
 
