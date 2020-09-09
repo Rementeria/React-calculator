@@ -1,7 +1,5 @@
 //This is the base of everything
 import React, { useState, useEffect } from "react";
-import DisplayPanel from "./DisplayPanel";
-import NumericKeys from "./NumericKeys";
 import * as math from "mathjs";
 import "./Calculator.css";
 
@@ -10,8 +8,8 @@ function Calculator({ initialValue }) {
   const [subPanel, setSubPanel] = useState("0");
   //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
   //regex taken from this site
-  let format = /[*+-/()]+/;
-  let format2 = /[()]+/;
+  let arithRegex = /[*+-/()]+/;
+  let parenthRegex = /[()]+/;
 
   useEffect(() => {
     if (initialValue === "") {
@@ -38,12 +36,27 @@ function Calculator({ initialValue }) {
     }
     return numbers;
   };
+  const createFunction = (name, value) => {
+    return { name, value };
+  };
+
+  const functions = [
+    createFunction("AC", "AC"),
+    createFunction("<", "<"),
+    createFunction("Edit", "Edit"),
+    createFunction("+", "+"),
+    createFunction("-", "-"),
+    createFunction("*", "*"),
+    createFunction("/", "/"),
+    createFunction("(", "("),
+    createFunction(")", ")"),
+  ];
 
   const arithmeticCheck = (e) => {
-    format.test(panel[panel.length - 1])
+    arithRegex.test(panel[panel.length - 1])
       ? setPanel(panel.slice(0, -1) + e)
       : setPanel(panel + e);
-    if (format2.test(panel[panel.length - 1])) {
+    if (parenthRegex.test(panel[panel.length - 1])) {
       setPanel(panel + e);
     }
   };
@@ -53,109 +66,67 @@ function Calculator({ initialValue }) {
 
   return (
     <div className="container center-text">
-      <div>{subPanel}</div>
-      <div className="display-panel my-2">
-        <DisplayPanel Panel={panel} />
-      </div>
-      <div className="operations my-2">
-        <button
-          className="btn btn-danger"
-          value={initialValue}
-          onClick={(e) => {
-            initialValue === "0" || initialValue === ""
-              ? setPanel("0")
-              : setPanel(e.target.value);
-            setSubPanel("0");
-          }}
-        >
-          AC
-        </button>
-        <button
-          className="btn btn-warning"
-          onClick={() => {
-            if (panel.length > 1) {
-              setPanel(panel.slice(0, -1));
-            } else if (panel.length <= 1 && initialValue === "") {
-              setPanel("0");
-            } else if (panel.length <= 1 && initialValue !== "") {
-              setPanel(initialValue);
-            }
-          }}
-        >
-          &#60;
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => {
-            subPanel === "0"
-              ? setPanel(panel)
-              : setPanel(subPanel.slice(0, -2));
-          }}
-        >
-          Prev
-        </button>
-        <button
-          className="btn btn-secondary"
-          value="("
-          onClick={(e) => {
-            parenthesis(e.target.value);
-          }}
-        >
-          (
-        </button>
-        <button
-          className="btn btn-secondary"
-          value=")"
-          onClick={(e) => {
-            parenthesis(e.target.value);
-          }}
-        >
-          )
-        </button>
-        <button
-          className="btn btn-primary"
-          value="+"
-          onClick={(e) => {
-            arithmeticCheck(e.target.value);
-          }}
-        >
-          +
-        </button>
-        <button
-          className="btn btn-primary"
-          value="-"
-          key="-"
-          onClick={(e) => {
-            arithmeticCheck(e.target.value);
-          }}
-        >
-          -
-        </button>
-        <button
-          className="btn btn-primary"
-          value="*"
-          key="*"
-          onClick={(e) => {
-            arithmeticCheck(e.target.value);
-          }}
-        >
-          *
-        </button>
-        <button
-          className="btn btn-primary"
-          value="/"
-          key="/"
-          onClick={(e) => {
-            arithmeticCheck(e.target.value);
-          }}
-        >
-          /
-        </button>
+      <div className="my-2">{subPanel}</div>
+      <div className="display-panel my-2">{panel}</div>
+      <div>
+        {functions.map((data, key) => (
+          <button
+            key={key}
+            value={data.value}
+            onClick={(e) => {
+              switch (data.value) {
+                case "AC":
+                  if (initialValue === "0" || initialValue === "") {
+                    setPanel("0");
+                    setSubPanel("0");
+                  } else {
+                    setPanel(initialValue);
+                    setSubPanel("0");
+                  }
+                  break;
+                case "<":
+                  if (panel.length > 1) {
+                    setPanel(panel.slice(0, -1));
+                  } else if (panel.length <= 1 && initialValue === "") {
+                    setPanel("0");
+                  } else if (panel.length <= 1 && initialValue !== "") {
+                    setPanel(initialValue);
+                  }
+                  break;
+                case "Edit":
+                  subPanel === "0"
+                    ? setPanel(panel)
+                    : setPanel(subPanel.slice(0, -2));
+                  break;
+                case "+":
+                  arithmeticCheck(e.target.value);
+                  break;
+                case "-":
+                  arithmeticCheck(e.target.value);
+                  break;
+                case "*":
+                  arithmeticCheck(e.target.value);
+                  break;
+                case "/":
+                  arithmeticCheck(e.target.value);
+                  break;
+                case "(":
+                  parenthesis(e.target.value);
+                  break;
+                case ")":
+                  parenthesis(e.target.value);
+                  break;
+              }
+            }}
+          >
+            {data.name}
+          </button>
+        ))}
       </div>
       <div className="numbers my-2">
-        <NumericKeys className="numbers" Buttons={numericButtons()} />
+        <div>{numericButtons()}</div>
         <button
-          className="btn btn-outline-dark mx-2"
+          className="btn btn-outline-dark mt-2"
           onClick={(e) =>
             panel === initialValue
               ? setPanel(e.target.value)
@@ -175,7 +146,7 @@ function Calculator({ initialValue }) {
               setSubPanel(panel + " =");
               setPanel(math.evaluate(panel));
             } catch (err) {
-              setPanel("Error, please press AC");
+              setPanel("Error, please press AC to delete or Prev to edit");
             }
           }}
           value="="
