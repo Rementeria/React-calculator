@@ -1,17 +1,7 @@
-@media (min-width: 768px) {
-  .calculator-size {
-    width: 600px;
-    margin: 0 auto;
-  }
-}
 .align-left {
   justify-items: left;
 }
-@media (min-width: 768px) {
-  .button-size {
-    width: 100px;
-  }
-}
+
 .calculator {
   border: 1px solid blanchedalmond;
 }
@@ -20,10 +10,32 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.pc {
+  padding: 0 0 20px 0;
+}
 .panel {
-  font-size: 20px;
+  font-size: 13px;
   white-space: nowrap;
 }
+
 .sub-panel {
   word-break: break-all;
+  font-size: 10px;
+}
+@media (min-width: 768px) {
+  .button-size {
+    width: 100px;
+  }
+  .panel {
+    font-size: 20px;
+    white-space: nowrap;
+  }
+  .sub-panel {
+    font-size: 15px;
+  }
+  .calculator-size {
+    width: 600px;
+    margin: 0 auto;
+  }
 }

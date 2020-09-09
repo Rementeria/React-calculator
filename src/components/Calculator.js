@@ -80,12 +80,12 @@ function Calculator({ initialValue }) {
 
   return (
     <div className="calculator-size">
-      <div className="nes-container">
+      <div className="nes-container pc">
         <div className="nes-input is-dark display">
-          <div className="mb-2 d-flex flex-row-reverse mr-3 sub-panel">
+          <div className="mb-2 d-flex flex-row-reverse sub-panel">
             {subPanel}
           </div>
-          <div className="d-flex flex-row-reverse mr-3 panel">{panel}</div>
+          <div className="d-flex flex-row-reverse panel">{panel}</div>
         </div>
 
         <div className="container">
