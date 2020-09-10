@@ -5,7 +5,7 @@ import "./Calculator.css";
 
 function Calculator({ initialValue }) {
   const [panel, setPanel] = useState(initialValue);
-  const [subPanel, setSubPanel] = useState("0");
+  const [subPanel, setSubPanel] = useState("Ans");
   //https://stackoverflow.com/questions/32311081/check-for-special-characters-in-string
   //regex taken from this site
   let arithRegex = /[*+-/()]+/;
@@ -16,21 +16,6 @@ function Calculator({ initialValue }) {
       setPanel("0");
     }
   }, [initialValue]);
-  const buttonNumber = (e) => {
-    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
-  };
-
-  const arithmeticCheck = (e) => {
-    arithRegex.test(panel[panel.length - 1])
-      ? setPanel(panel.slice(0, -1) + e)
-      : setPanel(panel + e);
-    if (parenthRegex.test(panel[panel.length - 1])) {
-      setPanel(panel + e);
-    }
-  };
-  const parenthesis = (e) => {
-    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
-  };
 
   const createFunction = (name, value, style) => {
     return { name, value, style };
@@ -38,8 +23,8 @@ function Calculator({ initialValue }) {
 
   const functions = [
     createFunction("AC", "AC", "nes-btn is-error col-3"),
-    createFunction("<<", "<", "nes-btn is-warning col-3"),
-    createFunction("fix", "Edit", "nes-btn is-warning col-3"),
+    createFunction("<<", "Delete", "nes-btn is-warning col-3"),
+    createFunction("Ans", "Edit", "nes-btn is-warning col-3"),
 
     createFunction("+", "+", "nes-btn is-primary col-3"),
     createFunction("-", "-", "nes-btn is-primary col-3"),
@@ -63,16 +48,51 @@ function Calculator({ initialValue }) {
 
     createFunction("0", "0", "nes-btn col-3"),
     createFunction(".", ".", "nes-btn col-3"),
-    createFunction("=", "=", "nes-btn is-success col-3"),
+    createFunction("=", "Result", "nes-btn is-success col-3"),
   ];
 
-  const result = () => {
+  const buttonAC = () => {
+    if (initialValue === "0" || initialValue === "") {
+      setPanel("0");
+      setSubPanel("Ans");
+    } else {
+      setPanel(initialValue);
+      setSubPanel("Ans");
+    }
+  };
+  const buttonDelete = () => {
+    if (panel.length > 1 && panel !== "Error") {
+      setPanel(panel.slice(0, -1));
+    } else if (panel.length <= 1 && initialValue === "") {
+      setPanel("0");
+    } else if (panel.length <= 1 && initialValue !== "") {
+      setPanel(initialValue);
+    }
+  };
+  const buttonEdit = () => {
+    subPanel === "Ans" ? setPanel(panel) : setPanel(subPanel.slice(0, -1));
+  };
+  const arithmeticCheck = (e) => {
+    arithRegex.test(panel[panel.length - 1])
+      ? setPanel(panel.slice(0, -1) + e)
+      : setPanel(panel + e);
+    if (parenthRegex.test(panel[panel.length - 1])) {
+      setPanel(panel + e);
+    }
+  };
+  const parenthesis = (e) => {
+    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
+  };
+  const buttonNumber = (e) => {
+    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
+  };
+  const buttonResult = () => {
     try {
       setSubPanel(panel + "=");
       setPanel(math.evaluate(panel));
     } catch (err) {
-      setPanel("Error");
-      if (panel === "Error") {
+      setPanel("Error, press AC");
+      if (panel === "Error, press AC") {
         setSubPanel(subPanel);
       }
     }
@@ -97,27 +117,13 @@ function Calculator({ initialValue }) {
               onClick={(e) => {
                 switch (data.value) {
                   case "AC":
-                    if (initialValue === "0" || initialValue === "") {
-                      setPanel("0");
-                      setSubPanel("0");
-                    } else {
-                      setPanel(initialValue);
-                      setSubPanel("0");
-                    }
+                    buttonAC();
                     break;
-                  case "<":
-                    if (panel.length > 1) {
-                      setPanel(panel.slice(0, -1));
-                    } else if (panel.length <= 1 && initialValue === "") {
-                      setPanel("0");
-                    } else if (panel.length <= 1 && initialValue !== "") {
-                      setPanel(initialValue);
-                    }
+                  case "Delete":
+                    buttonDelete();
                     break;
                   case "Edit":
-                    subPanel === "0"
-                      ? setPanel(panel)
-                      : setPanel(subPanel.slice(0, -1));
+                    buttonEdit();
                     break;
                   case "+":
                     arithmeticCheck(e.target.value);
@@ -170,8 +176,8 @@ function Calculator({ initialValue }) {
                   case ".":
                     buttonNumber(e.target.value);
                     break;
-                  case "=":
-                    result();
+                  case "Result":
+                    buttonResult();
                     break;
                   default:
                     setPanel("Error");
