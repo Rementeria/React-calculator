@@ -11,16 +11,19 @@ function Calculator({ initialValue }) {
   let arithRegex = /[*+-/()]+/;
   let parenthRegex = /[()]+/;
 
+  //function to change the initialValue to 0 in case it's initiated like empty string
   useEffect(() => {
     if (initialValue === "") {
       setPanel("0");
     }
   }, [initialValue]);
 
+  //Function to create all buttons with their attributes
   const createFunction = (name, value, style) => {
     return { name, value, style };
   };
 
+  //Const that has every button with respective properties
   const functions = [
     createFunction("AC", "AC", "nes-btn is-error col-3"),
     createFunction("<<", "Delete", "nes-btn is-warning col-3"),
@@ -51,6 +54,7 @@ function Calculator({ initialValue }) {
     createFunction("=", "Result", "nes-btn is-success col-3"),
   ];
 
+  //Function that set the Panel to zero or to the initialValue
   const buttonAC = () => {
     if (initialValue === "0" || initialValue === "") {
       setPanel("0");
@@ -60,6 +64,8 @@ function Calculator({ initialValue }) {
       setSubPanel("Ans");
     }
   };
+
+  //Function that deletes the last character of the string in the panel
   const buttonDelete = () => {
     if (panel.length > 1 && panel !== "Error") {
       setPanel(panel.slice(0, -1));
@@ -69,9 +75,14 @@ function Calculator({ initialValue }) {
       setPanel(initialValue);
     }
   };
+
+  //Function that sets the panel with the value in the subPanel
   const buttonEdit = () => {
     subPanel === "Ans" ? setPanel(panel) : setPanel(subPanel.slice(0, -1));
   };
+
+  // Function that checks if the last character of the panel string is an arithmetic function, by testing the regex defined,
+  // if it does, it replaces it with the new arithmetic function pressed, if not, it continues adding characters to the panel
   const arithmeticCheck = (e) => {
     arithRegex.test(panel[panel.length - 1])
       ? setPanel(panel.slice(0, -1) + e)
@@ -80,12 +91,18 @@ function Calculator({ initialValue }) {
       setPanel(panel + e);
     }
   };
+
+  //Function that checks if the panel has a zero, if it does, it replaces it with a parenthesis, if not, it continues adding parenthesis
   const parenthesis = (e) => {
-    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
+    panel === "0" ? setPanel(e) : setPanel(panel + e);
   };
+
+  //Function that adds to the panel the number pressed
   const buttonNumber = (e) => {
-    panel === "" || panel === "0" ? setPanel(e) : setPanel(panel + e);
+    panel === "0" ? setPanel(e) : setPanel(panel + e);
   };
+
+  //Function that calls mathjs and evaluates the string in the panel and calculates it's result
   const buttonResult = () => {
     try {
       setSubPanel(panel + "=");
