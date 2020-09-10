@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## React Calculator
 
-![Alt text](./public/calculator.jpg?raw=true "Title")
+![Alt text](./public/calculator.png?raw=true "Title")
 
 React calculator created by Pablo González to qualify for "Entry" position at 23People.
 
